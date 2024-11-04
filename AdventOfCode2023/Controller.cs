@@ -20,7 +20,7 @@ namespace AdventOfCode2023
             try
             {
                 string projectPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
-                string path = $"{projectPath}\\AdventOfCode2023\\Input\\Day 1\\day1-1.txt";
+                string path = $"{projectPath}\\AdventOfCode2023\\Input\\Day 1\\day1-2.txt";
                 this.input = File.ReadAllLines(path);
             }
             catch {
@@ -30,7 +30,7 @@ namespace AdventOfCode2023
 
         public void Run() { 
             // Load data
-            GlobalSnowProduction g = new GlobalSnowProduction(input);
+            Day1 g = new Day1(input);
             g.Trebuchet();
         
         }
