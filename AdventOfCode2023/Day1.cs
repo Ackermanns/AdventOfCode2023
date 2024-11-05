@@ -27,7 +27,7 @@ namespace AdventOfCode2023
         }
 
         // Substitutes word number for string number left to right
-        private string substituteWordForNumberLeftRight(int i)
+        private string SubstituteWordForNumberLeftRight(int i)
         {
             string line = "";
             for (int j = 0; j != input[i].Length; j++)
@@ -42,7 +42,7 @@ namespace AdventOfCode2023
         }
 
         // Substitutes word number for string number right to left
-        private string substituteWordForNumberRightLeft(int i)
+        private string SubstituteWordForNumberRightLeft(int i)
         {
             string line = "";
             for (int j = input[i].Length-1; j != -1; j--)
@@ -68,7 +68,7 @@ namespace AdventOfCode2023
             for (int i = 0; i != input.Length; i++)
             {
                 // Get left to right in proper format
-                line = substituteWordForNumberLeftRight(i);
+                line = SubstituteWordForNumberLeftRight(i);
                 for (int j = 0; j != line.Length; j++)
                 {
                     // Part 2: Substitute words for numbers
@@ -82,7 +82,7 @@ namespace AdventOfCode2023
                 }
 
                 // Get right to left in proper format
-                line = substituteWordForNumberRightLeft(i);
+                line = SubstituteWordForNumberRightLeft(i);
                 for (int j = line.Length - 1; j != -1; j--)
                 {
                     valueToConvert = line[j].ToString();
