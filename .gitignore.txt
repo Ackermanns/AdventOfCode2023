@@ -1,0 +1,2 @@
+.vs
+AdventOfCode2023/bin
