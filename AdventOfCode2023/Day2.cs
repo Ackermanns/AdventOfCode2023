@@ -9,20 +9,28 @@ namespace AdventOfCode2023
     public class Day2
     {
         private int total = 0;
+        private int powerTotal = 0;
         private int gameID = 0;
+        private bool isValidGame = true;
         private string[] gameRoundItems;
         private string[] input;
-        private Dictionary<string, int> maximumCubes = new Dictionary<string, int>
+        private Dictionary<string, int> roundResultsAllowed = new Dictionary<string, int>
         {
             { "blue", 14 },
             { "red", 12 },
             { "green", 13 }
         };
-        private Dictionary<string, int> gameResults = new Dictionary<string, int>
+        private Dictionary<string, int> roundResults = new Dictionary<string, int>
         {
             { "blue", 0 },
             { "red", 0 },
             { "green", 0 },
+        };
+        private Dictionary<string, int> gameMinimums = new Dictionary<string, int>
+        {
+            { "blue", 1 },
+            { "red", 1 },
+            { "green", 1 },
         };
 
         public Day2(string[] input)
@@ -31,15 +39,23 @@ namespace AdventOfCode2023
         }
 
         // Resets game into a starting state
-        private void ResetGameResults()
+        private void ResetRoundResults()
         {
-            this.gameResults["blue"] = 0;
-            this.gameResults["red"] = 0;
-            this.gameResults["green"] = 0;
+            this.roundResults["blue"] = 0;
+            this.roundResults["red"] = 0;
+            this.roundResults["green"] = 0;
+        }
+
+        // Resets game minimum cubes needed into a starting state
+        private void ResetMinimumCubesInGame()
+        {
+            this.gameMinimums["blue"] = 1;
+            this.gameMinimums["red"] = 1;
+            this.gameMinimums["green"] = 1;
         }
 
         // Adds game outcome values based on a given round in preparation for checking if it was a valid game
-        private void LoadGameResults(string line)
+        private void LoadRoundResults(string line)
         {
             try
             {
@@ -54,7 +70,7 @@ namespace AdventOfCode2023
             }
         }
 
-        // Loads round cubes into dictionary for further processing
+        // Loads initial round cubes into dictionary for further processing
         private void LoadRoundCubes(string roundValues)
         {
             string[] cubeSet = roundValues.Split(",");
@@ -64,33 +80,50 @@ namespace AdventOfCode2023
                 if (cubeSet[i].Contains("blue"))
                 {
                     roundValue = cubeSet[i].Replace(" blue", "");
-                    this.gameResults["blue"] += int.Parse(roundValue);
+                    this.roundResults["blue"] += int.Parse(roundValue);
                 }
                 else if (cubeSet[i].Contains("red"))
                 {
                     roundValue = cubeSet[i].Replace(" red", "");
-                    this.gameResults["red"] += int.Parse(roundValue);
+                    this.roundResults["red"] += int.Parse(roundValue);
                 }
                 else if (cubeSet[i].Contains("green"))
                 {
                     roundValue = cubeSet[i].Replace(" green", "");
-                    this.gameResults["green"] += int.Parse(roundValue);
+                    this.roundResults["green"] += int.Parse(roundValue);
                 }
+            }
+        }
+
+        // Updates the minimum required cubes needed to play for Part 2 solution
+        private void UpdateMinimumCubesInGame()
+        {
+            if (this.roundResults["blue"] > this.gameMinimums["blue"])
+            {
+                this.gameMinimums["blue"] = this.roundResults["blue"];
+            }
+            if (this.roundResults["red"] > this.gameMinimums["red"])
+            {
+                this.gameMinimums["red"] = this.roundResults["red"];
+            }
+            if (this.roundResults["green"] > this.gameMinimums["green"])
+            {
+                this.gameMinimums["green"] = this.roundResults["green"];
             }
         }
 
         // Cross references current loaded data values with valid game requirements
         private bool ValidateGameOutcome()
         {
-            if (this.gameResults["blue"] > this.maximumCubes["blue"])
+            if (this.roundResults["blue"] > this.roundResultsAllowed["blue"])
             {
                 return false;
             }
-            else if (this.gameResults["red"] > this.maximumCubes["red"])
+            else if (this.roundResults["red"] > this.roundResultsAllowed["red"])
             {
                 return false;
             }
-            else if (this.gameResults["green"] > this.maximumCubes["green"])
+            else if (this.roundResults["green"] > this.roundResultsAllowed["green"])
             {
                 return false;
             }
@@ -103,25 +136,39 @@ namespace AdventOfCode2023
             bool isValidRound;
             for (int i = 0; i != input.Length; i++)
             {
-                LoadGameResults(input[i]);
+                isValidGame = true;
+                LoadRoundResults(input[i]);
                 for (int j=0; j != gameRoundItems.Length; j++)
                 {
                     string roundItems = gameRoundItems[j];
+                    ResetRoundResults();
                     LoadRoundCubes(roundItems);
+                    UpdateMinimumCubesInGame();
+
+                    // Part 2 - regardless of valid/invalid game, add to power total
+                    if (j == gameRoundItems.Length - 1)
+                    {
+                        int gameTotal = this.gameMinimums["blue"] * this.gameMinimums["red"] * this.gameMinimums["green"];
+                        this.powerTotal += gameTotal;
+                        ResetMinimumCubesInGame();
+                    }
+
                     isValidRound = ValidateGameOutcome();
                     if (isValidRound == false)
                     {
-                        ResetGameResults();
-                        break;
+                        isValidGame = false;
                     }
-                    else if (isValidRound ==true && j == gameRoundItems.Length-1)
+                    ResetRoundResults();
+
+                    // At the end of the game, add to total if all rounds true
+                    if (isValidGame && j == gameRoundItems.Length-1)
                     {
                         total += gameID;
                     }
-                    ResetGameResults();
                 }
             }
-            Console.WriteLine(this.total);
+            Console.WriteLine($"Part 1 total: {this.total}");
+            Console.WriteLine($"Part 2 total: {this.powerTotal}");
         }
     }
 }
