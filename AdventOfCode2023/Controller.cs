@@ -30,7 +30,7 @@ namespace AdventOfCode2023
 
         public void Run() { 
             // Load data
-            Day3 g = new Day3(input);
+            Day3_2 g = new Day3_2(input);
             g.GondolaLift();
         
         }

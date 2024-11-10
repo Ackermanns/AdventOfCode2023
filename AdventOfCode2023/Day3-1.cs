@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2023
 {
-    internal class Day3
+    internal class Day3_1
     {
         /*
          Strategy is to find symbols, then find any adjacent numbers to add to total
@@ -16,7 +16,7 @@ namespace AdventOfCode2023
         private int total;
         private string numberToCheck;
 
-        public Day3(string[] input)
+        public Day3_1(string[] input)
         {
             this.input = input;
         }
