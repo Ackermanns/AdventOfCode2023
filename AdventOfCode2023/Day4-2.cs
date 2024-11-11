@@ -15,6 +15,10 @@ namespace AdventOfCode2023
         private int cardWinningsTotal;
         private int numCardWinnings;
 
+        // Part 2
+        private List<int> allCardWinnings = new List<int> { };
+        private List<int> allNumCardWinnings = new List<int> { };
+
         public Day4_2(string[] input)
         {
             this.input = input;
@@ -75,14 +79,26 @@ namespace AdventOfCode2023
 
         private void ResetForNextCard()
         {
+
             cardWinningsTotal = 0;
             numCardWinnings = 0;
             winningNumbers = new List<int> { };
             myNumbers = new List<int> { };
         }
 
+        private int AddSubCardWinnings(int cardId)
+        {
+            int subCardTotal = 0;
+            for (int j = 1; j != allNumCardWinnings[cardId]+1; j++)
+            {
+                subCardTotal += allCardWinnings[cardId+j];
+            }
+            return subCardTotal;
+        }
+
         public void ScratchCards()
         {
+            // Part 1 now creates the winnings for each round
             for (int i = 0; i < input.Length; i++)
             {
                 LoadCardDetails(input[i]);
@@ -95,10 +111,21 @@ namespace AdventOfCode2023
                         HandleComparison(winningNumbers[w], myNumbers[m]);
                     }
                 }
-                total += cardWinningsTotal;
+                allCardWinnings.Add(cardWinningsTotal);
+                allNumCardWinnings.Add(numCardWinnings);
                 ResetForNextCard();
             }
-            Console.WriteLine($"Day 4, Part 1 total: {total}");
+
+            // Part 2 solution here: All scratchcard totals calculated, just need to add together based on rules
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (allNumCardWinnings[i] > 0)
+                {
+                    total += allCardWinnings[i];
+                    total += AddSubCardWinnings(i);
+                }
+            }
+            Console.WriteLine($"Day 2, part 2: {total}");
         }
     }
 }
